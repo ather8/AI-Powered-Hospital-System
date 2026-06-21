@@ -1,0 +1,126 @@
+# docker-compose.yml — Local development stack for the AI-Powered Hospital System
+#
+# Services
+# --------
+#   db       — PostgreSQL 16  (data persisted in the pgdata volume)
+#   redis    — Redis 7        (rate limiting + chatbot session cache)
+#   backend  — FastAPI app    (hot-reloads via volume mount in dev)
+#   frontend — Vite dev server (dev) or nginx+built bundle (prod)
+#
+# Dev quick start (hot-reload, source mounted)
+# --------------------------------------------
+#   cp backend/.env.example backend/.env   # fill in secrets
+#   docker compose up --build
+#
+#   Frontend  → http://localhost:5173
+#   API docs  → http://localhost:8000/docs
+#
+# Production quick start (compiled, optimised)
+# --------------------------------------------
+#   docker compose --profile prod up --build
+#
+#   Frontend  → http://localhost:80
+#   API docs  → http://localhost:8000/docs
+#
+# Reset the database (wipes all data)
+# ------------------------------------
+#   docker compose down -v
+#   docker compose up --build
+
+services:
+
+  # ── Database ──────────────────────────────────────────────────────────────
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: hospital
+      POSTGRES_PASSWORD: hospital
+      POSTGRES_DB: hospital
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U hospital"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  # ── Cache / rate-limit store ───────────────────────────────────────────────
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  # ── Backend (FastAPI) ──────────────────────────────────────────────────────
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    env_file:
+      - ./backend/.env
+    environment:
+      # Docker-internal hostnames override whatever is in .env
+      DATABASE_URL: postgresql://hospital:hospital@db:5432/hospital
+      REDIS_URL: redis://redis:6379/0
+    ports:
+      - "8000:8000"
+    volumes:
+      # Mount source so --reload picks up changes without a rebuild (dev only)
+      - ./backend:/app
+      # Persist the FAISS index across restarts
+      - faiss_index:/app/medical_guidelines_index
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    command: >
+      sh -c "
+        alembic upgrade head &&
+        uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+      "
+
+  # ── Frontend — dev (Vite hot-reload) ──────────────────────────────────────
+  # Active by default (no profile tag). Uses node:20 with source mounted.
+  frontend:
+    image: node:20-alpine
+    working_dir: /app
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    ports:
+      - "5173:5173"
+    environment:
+      VITE_API_BASE_URL: http://localhost:8000
+    command: sh -c "npm install && npm run dev -- --host 0.0.0.0"
+    depends_on:
+      - backend
+
+  # ── Frontend — production (nginx + compiled bundle) ───────────────────────
+  # Activated with:  docker compose --profile prod up --build
+  # Builds the Vite bundle and serves it via nginx on port 80.
+  frontend-prod:
+    profiles: [prod]
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        VITE_API_BASE_URL: http://localhost:8000
+    ports:
+      - "80:80"
+    restart: unless-stopped
+    depends_on:
+      - backend
+
+volumes:
+  pgdata:
+  faiss_index:

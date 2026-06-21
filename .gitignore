@@ -1,0 +1,61 @@
+# ── Secrets & environment ──────────────────────────────────────────────────
+backend/.env
+frontend/.env
+frontend/.env.local
+frontend/.env.*.local
+.env
+.env.*
+!.env.example
+!backend/.env.example
+
+# ── Python ─────────────────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+.venv/
+venv/
+env/
+*.egg-info/
+dist/
+build/
+*.egg
+.pytest_cache/
+.coverage
+htmlcov/
+*.pyo
+
+# ── Node / frontend ────────────────────────────────────────────────────────
+node_modules/
+frontend/node_modules/
+frontend/.output/
+frontend/dist/
+frontend/.vinxi/
+frontend/.nitro/
+.npm
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# ── Docker ─────────────────────────────────────────────────────────────────
+# (docker-compose.yml is committed; override files are not)
+docker-compose.override.yml
+
+# ── IDE / OS ───────────────────────────────────────────────────────────────
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# ── AI / ML artefacts ─────────────────────────────────────────────────────
+# Commit the FAISS index only if it's small enough (<50 MB).
+# Remove the next two lines if you want to include it in the repo.
+backend/medical_guidelines_index/
+backend/models/
+
+# ── Misc ───────────────────────────────────────────────────────────────────
+*.bak
+*.log
