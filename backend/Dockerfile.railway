@@ -1,0 +1,16 @@
+FROM python:3.11-slim
+
+WORKDIR /app
+
+# Use the trimmed dependency set (no torch/transformers/celery/redis/opencv —
+# see requirements-free.txt for why). Keeps build time and image size down,
+# which matters on a metered trial credit.
+COPY requirements-free.txt .
+RUN pip install --no-cache-dir -r requirements-free.txt
+
+COPY . .
+
+# Railway injects $PORT at runtime — shell form (not exec/JSON-array form)
+# is required here so the variable actually expands instead of being passed
+# through literally as the string "$PORT".
+CMD uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000}
