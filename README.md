@@ -4,19 +4,30 @@ A full-stack hospital platform with AI-assisted triage, clinical search, documen
 
 ---
 
+## Live deployment
+
+| Layer | Host |
+|-------|------|
+| Frontend | [Vercel](https://vercel.com) — [ai-powered-hospital-system.vercel.app](https://ai-powered-hospital-system.vercel.app/) |
+| Backend | [Railway](https://railway.app) |
+| Database | [Supabase](https://supabase.com) |
+
+---
+
 ## Table of contents
 
-1. [Feature overview](#feature-overview)
-2. [Screenshots](#screenshots)
-3. [Quick start — Docker Compose](#quick-start--docker-compose)
-4. [Database setup](#database-setup)
-5. [Environment variables](#environment-variables)
-6. [AI features setup](#ai-features-setup)
-7. [Local development (without Docker)](#local-development-without-docker)
-8. [Production deployment](#production-deployment)
-9. [Project structure](#project-structure)
-10. [Running tests](#running-tests)
-11. [Architecture notes](#architecture-notes)
+1. [Live deployment](#live-deployment)
+2. [Feature overview](#feature-overview)
+3. [Screenshots](#screenshots)
+4. [Quick start — Docker Compose](#quick-start--docker-compose)
+5. [Database setup](#database-setup)
+6. [Environment variables](#environment-variables)
+7. [AI features setup](#ai-features-setup)
+8. [Local development (without Docker)](#local-development-without-docker)
+9. [Production deployment](#production-deployment)
+10. [Project structure](#project-structure)
+11. [Running tests](#running-tests)
+12. [Architecture notes](#architecture-notes)
 
 ---
 
