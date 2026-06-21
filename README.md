@@ -7,15 +7,16 @@ A full-stack hospital platform with AI-assisted triage, clinical search, documen
 ## Table of contents
 
 1. [Feature overview](#feature-overview)
-2. [Quick start — Docker Compose](#quick-start--docker-compose)
-3. [Database setup](#database-setup)
-4. [Environment variables](#environment-variables)
-5. [AI features setup](#ai-features-setup)
-6. [Local development (without Docker)](#local-development-without-docker)
-7. [Production deployment](#production-deployment)
-8. [Project structure](#project-structure)
-9. [Running tests](#running-tests)
-10. [Architecture notes](#architecture-notes)
+2. [Screenshots](#screenshots)
+3. [Quick start — Docker Compose](#quick-start--docker-compose)
+4. [Database setup](#database-setup)
+5. [Environment variables](#environment-variables)
+6. [AI features setup](#ai-features-setup)
+7. [Local development (without Docker)](#local-development-without-docker)
+8. [Production deployment](#production-deployment)
+9. [Project structure](#project-structure)
+10. [Running tests](#running-tests)
+11. [Architecture notes](#architecture-notes)
 
 ---
 
@@ -39,6 +40,44 @@ A full-stack hospital platform with AI-assisted triage, clinical search, documen
 | **Audit Logs** | Tamper-evident log of every write action |
 | **Analytics** | Admin-only platform analytics |
 | **Export** | CSV export of patients / appointments |
+
+---
+
+---
+
+## Screenshots
+
+### Landing page
+
+| Hero | Features |
+|---|---|
+| ![Landing hero](docs/screenshots/landing-hero.png) | ![Landing features](docs/screenshots/landing-features.png) |
+
+### Auth
+
+| Sign in | Create account |
+|---|---|
+| ![Sign in](docs/screenshots/auth-login.png) | ![Create account](docs/screenshots/auth-register.png) |
+
+### Patient portal
+
+| Overview | Appointments |
+|---|---|
+| ![Patient portal overview](docs/screenshots/patient-portal-overview.png) | ![Patient appointments](docs/screenshots/patient-appointments.png) |
+
+**AI Symptom Checker** — multi-turn triage chatbot with session memory:
+
+![AI Symptom Checker](docs/screenshots/ai-symptom-checker.png)
+
+### Staff workspace (admin / doctor / nurse / receptionist)
+
+| Dashboard | Patients |
+|---|---|
+| ![Staff dashboard](docs/screenshots/staff-dashboard.png) | ![Staff patients](docs/screenshots/staff-patients.png) |
+
+| Appointments | Billing |
+|---|---|
+| ![Staff appointments](docs/screenshots/staff-appointments.png) | ![Staff billing](docs/screenshots/staff-billing.png) |
 
 ---
 
