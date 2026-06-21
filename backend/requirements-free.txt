@@ -1,0 +1,40 @@
+# Trimmed requirements for free-tier hosting (e.g. Render's free Web Service,
+# 512MB RAM). Use this instead of requirements.txt when deploying to a free
+# instance. For local development / Docker Compose / Path B (Oracle VM),
+# keep using requirements.txt, which has the full stack.
+#
+# Removed vs requirements.txt, and why:
+#   - celery, redis      → not imported anywhere in app/ (dead weight; Redis
+#                          is only mentioned in code comments as a future
+#                          option for multi-worker rate-limit storage)
+#   - opencv-python       → not imported anywhere in app/
+#   - torch, transformers → only used by the optional ClinicalBERT symptom
+#                          classifier, which has no shipped model and now
+#                          fails gracefully (RuntimeError) when these aren't
+#                          installed — see app/services/symptom_classifier.py.
+#                          ~1GB+ of install size / RAM that buys nothing on
+#                          a 512MB instance until you actually train and ship
+#                          a model.
+
+fastapi
+uvicorn
+slowapi
+sqlalchemy
+psycopg2-binary
+alembic
+python-jose[cryptography]
+passlib[bcrypt]
+bcrypt==4.0.1
+python-dotenv
+python-multipart
+Pillow
+pdf2image
+fpdf
+pytesseract
+pandas
+openai
+langchain
+langchain-core
+langchain-openai
+langchain-community
+faiss-cpu

@@ -7,8 +7,6 @@ loading it at import time would crash the whole FastAPI app on startup
 just because this one feature isn't set up yet. Instead, classify_symptom
 raises a clear, catchable error only when actually called.
 """
-import torch
-from transformers import AutoTokenizer, AutoModelForSequenceClassification
 from app.services.disease_labels import DISEASE_LABELS
 
 MODEL_PATH = "./models/clinicalbert-disease"
@@ -25,12 +23,17 @@ def _ensure_loaded():
     if _load_error is not None:
         raise _load_error
     try:
+        import torch  # noqa: F401  (imported here, not at module level, so a
+        # free-tier deploy without torch installed doesn't crash on startup —
+        # only this specific, optional feature becomes unavailable)
+        from transformers import AutoTokenizer, AutoModelForSequenceClassification
         _tokenizer = AutoTokenizer.from_pretrained(MODEL_PATH)
         _model = AutoModelForSequenceClassification.from_pretrained(MODEL_PATH)
     except Exception as e:
         _load_error = RuntimeError(
             f"ClinicalBERT model not available at '{MODEL_PATH}'. "
-            "Train and save a model there first (see train_clinicalbert.py). "
+            "Train and save a model there first (see train_clinicalbert.py), "
+            "and ensure torch/transformers are installed. "
             f"Original error: {e}"
         )
         raise _load_error
@@ -38,6 +41,7 @@ def _ensure_loaded():
 
 def classify_symptom(symptoms: str) -> dict:
     _ensure_loaded()
+    import torch
     inputs = _tokenizer(symptoms, return_tensors="pt", truncation=True, padding=True)
     outputs = _model(**inputs)
     probs = torch.nn.functional.softmax(outputs.logits, dim=-1)
